@@ -52,26 +52,18 @@ function customerStart() {
         ])
         .then(function(answer) {
           // get the information of the chosen item
-          // answer.choice = "hot dogs"
-          /* 
-            chosenItem = {
-              id: 1,
-              name: "hot dog",
-              bid: 4.50
-            };
-          */
-         console.log("updating quantity 1")
+("updating quantity 1")
           var chosenItem;
           for (var i = 0; i < results.length; i++) {
-            if (results[i].item_name === answer.choice) {
+            if (results[i].product_name === answer.choice) {
               chosenItem = results[i];
             }
         console.log("updating quantity 2")
           }
   
-          // determine if bid was high enough
-          if (chosenItem.stock_quantity < parseInt(answer.stock_quantity)) {
-            // bid was high enough, so update db, let the user know, and start over
+          // determine if quantity is enough
+          if (chosenItem.stock_quantity >= parseInt(answer.stock_quantity)) {
+            // stock_quantity was high enough, so update db, let the user know, and start over
             connection.query(
               "UPDATE products SET ? WHERE ?",
               [
@@ -84,15 +76,15 @@ function customerStart() {
               ],
               function(error) {
                 if (error) throw err;
-                console.log("Bid placed successfully!");
-                start();
+                console.log("That amount is just right!");
+                customerStart();
               }
             );
           }
           else {
             // bid wasn't high enough, so apologize and start over
-            console.log("Your bid was too low. Try again...");
-            start();
+            console.log("What are you doing fool you gotta buy less who you think we are, Walmart");
+            customerStart();
           }
         });
     });
