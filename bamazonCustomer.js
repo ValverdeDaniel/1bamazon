@@ -24,8 +24,10 @@ connection.connect(function(err) {
 
 function customerStart() {
     // query the database for all items being auctioned
+    require("console.table");
     connection.query("SELECT * FROM products", function(err, results) {
       if (err) throw err;
+      console.table(results);
       // once you have the items, prompt the user for which they'd like to bid on
       inquirer
         .prompt([
@@ -36,13 +38,13 @@ function customerStart() {
               var choiceArray = [];
               for (var i = 0; i < results.length; i++) {
                 choiceArray.push(results[i].product_name);
-                console.log("testing prompt 1")
+                
               }
   
               // [ "hamburgers", "hot dogs" ]
               return choiceArray;
             },
-            message: "What auction would you like to place a bid in?"
+            message: "What product would you like to buy?"
           },
           {
             name: "stock_quantity",
@@ -52,13 +54,12 @@ function customerStart() {
         ])
         .then(function(answer) {
           // get the information of the chosen item
-("updating quantity 1")
           var chosenItem;
           for (var i = 0; i < results.length; i++) {
             if (results[i].product_name === answer.choice) {
               chosenItem = results[i];
             }
-        console.log("updating quantity 2")
+ 
           }
   
           // determine if quantity is enough
@@ -68,7 +69,7 @@ function customerStart() {
               "UPDATE products SET ? WHERE ?",
               [
                 {
-                  stock_quantity: answer.stock_quantity
+                  stock_quantity: chosenItem.stock_quantity - answer.stock_quantity
                 },
                 {
                   item_id: chosenItem.item_id
@@ -76,7 +77,7 @@ function customerStart() {
               ],
               function(error) {
                 if (error) throw err;
-                console.log("That amount is just right!");
+                console.log("Booom! your purchase has just been completed! I hope you enjoy your " + chosenItem.product_name + "! :)" + " Please shop with us again!");
                 customerStart();
               }
             );
