@@ -22,3 +22,187 @@
 
 //d. INSERT INTO products (product_name, department_name, price, stock_quantity)
 // VALUES ("guitar", "instruments", 100, 10);
+
+
+
+var mysql = require("mysql");
+var inquirer = require("inquirer");
+
+var connection = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "44Mooses",
+    database: "bamazonDB"
+});
+
+connection.connect(function(err){
+    if (err) throw err;
+    runSearch();
+});
+
+function runSearch() {
+    inquirer
+    .prompt({
+        name: "action",
+        type: "list",
+        message: "What would you like to do?",
+        choices: [
+            "View Products for Sale",
+        "View Low Inventory",
+        "Add to Inventory",
+        "Add New Product"
+        ]
+    })
+    .then(function(answer) {
+        switch (answer.action) {
+            case "View Products for Sale":
+            viewProducts();
+            break;
+
+            case "View Low Inventory":
+            lowInventory();
+            break;
+
+            case "Add to Inventory":
+            addInventory();
+            break;
+
+            case "Add New Product":
+            insertProduct();
+            break;
+            
+        }
+    });
+}
+//function viewProducts
+function viewProducts() {
+   console.log("Selecting all products...\n");
+   connection.query("SELECT * from products", function(err, res) {
+       if (err) throw err;
+       console.log(res);
+       connection.end();
+       runSearch();
+   })
+}
+
+//function LowInventory
+    // select product_id, product_name, stock_quantity 
+    //   from products;
+
+
+
+function lowInventory() {
+    console.log("selecting products with stock_quantity < 5\n");
+    connection.query("Select product_name, department_name, stock_quantity from products where stock_quantity <5", function(err, res) {
+        if(err) throw err;
+        console.log(res);
+        connection.end();
+        runSearch();
+    })
+}
+
+
+
+//function AddInventory
+        //c. 
+function addInventory() {
+    require("console.table");
+    connection.query("Select * from products", function (err, results){
+        if (err) throw err;
+        console.table(results);
+        inquirer
+            .prompt([
+                {
+                    name: "choice",
+                    type: "list",
+                    choices: function() {
+                        var choiceArray = [];
+                        for(var i = 0; i < results.length; i+=1) {
+                            choiceArray.push(results[i].product_name);
+                        }
+                        return choiceArray;
+                    },
+                    message: "Which product would you like to update their inventory?"
+                },
+                {
+                    name: "stock_quantity",
+                    type: "input",
+                    message: "What is the current quantity of the product you selected"
+                }
+            ])
+            .then(function(answer) {
+                connection.query(
+                    "update products set ? Where?",
+                    [
+                        {
+                            stock_quantity: chosenItem.stock_quantity
+                        },
+                        {
+                            item_id: chosenItem.item_id
+                        }
+                    ],
+                    function(error) {
+                        if (error) throw err;
+                        console.log("Your stock quantity has been updated");
+                        runSearch();
+                    })
+            });
+        
+            
+    });
+
+}
+        
+//function InsertProduct
+
+    //d. 
+
+function insertProduct() {
+    inquirer.prompt([
+        {
+            name: "product_name",
+            type: "input",
+            message: "What is the product you would like to submit?"
+        },
+        {
+            name:"department_name",
+            type: "input",
+            message: "What department would you like to put your product in"
+        },
+        {
+            name: "price",
+            type: "input",
+            message: "What price would you like to list this product at?"
+        },
+        {
+           name: "stock_quantity",
+           type: "input",
+           message: "What quantity of this item do you have available for sale?",
+           validate: function(value) {
+               if (isNaN(value) === false){
+                   return true;
+               }
+               return false;
+           }
+        }
+    ])
+    .then(function(answer) {
+        connection.query(
+            "Insert INTO products Set?",
+            {
+                product_name: answer.product_name,
+                department_name: answer.department_name,
+                price: answer.price,
+                stock_quantity: answer.stock_quantity
+            },
+            function(err) {
+                if (err) throw err;
+                console.log("your product was successfully added");
+//is it correct to end connection at the end of each function?
+                connection.end();
+                runSearch();
+            }
+        )
+    });
+}
