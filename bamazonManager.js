@@ -77,10 +77,11 @@ function runSearch() {
 }
 //function viewProducts
 function viewProducts() {
+    require("console.table");
    console.log("Selecting all products...\n");
    connection.query("SELECT * from products", function(err, res) {
        if (err) throw err;
-       console.log(res);
+       console.table(res);
        connection.end();
        runSearch();
    })
@@ -93,10 +94,11 @@ function viewProducts() {
 
 
 function lowInventory() {
+    require("console.table");
     console.log("selecting products with stock_quantity < 5\n");
     connection.query("Select product_name, department_name, stock_quantity from products where stock_quantity <5", function(err, res) {
         if(err) throw err;
-        console.log(res);
+        console.table(res);
         connection.end();
         runSearch();
     })
