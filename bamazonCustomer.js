@@ -78,6 +78,7 @@ function customerStart() {
               function(error) {
                 if (error) throw err;
                 console.log("Booom! your purchase has just been completed! I hope you enjoy your " + chosenItem.product_name + "! :)" + " Please shop with us again!");
+                console.log("your grand total is $" + parseFloat(((results(chosenItem.item_id).price)*parseInt(chosenItem.stock_quantity))))
                 customerStart();
               }
             );
