@@ -47,7 +47,7 @@ function customerStart() {
             message: "What product would you like to buy?"
           },
           {
-            name: "stock_quantity",
+            name: "buying_quantity",
             type: "input",
             message: "How many would you like to buy?"
           }
@@ -61,15 +61,18 @@ function customerStart() {
             }
  
           }
-  
+
           // determine if quantity is enough
-          if (chosenItem.stock_quantity >= parseInt(answer.stock_quantity)) {
+          if (chosenItem.stock_quantity >= parseInt(answer.buying_quantity)) {
+            var buyingQuantity = answer.buying_quantity;
+            var buyerPrice = results[chosenItem.item_id-1].price;
+            var grandTotal = buyingQuantity * buyerPrice;
             // stock_quantity was high enough, so update db, let the user know, and start over
             connection.query(
               "UPDATE products SET ? WHERE ?",
               [
                 {
-                  stock_quantity: chosenItem.stock_quantity - answer.stock_quantity
+                  stock_quantity: chosenItem.stock_quantity - answer.buying_quantity
                 },
                 {
                   item_id: chosenItem.item_id
@@ -78,7 +81,8 @@ function customerStart() {
               function(error) {
                 if (error) throw err;
                 console.log("Booom! your purchase has just been completed! I hope you enjoy your " + chosenItem.product_name + "! :)" + " Please shop with us again!");
-                console.log("your grand total is $" + parseFloat(((results(chosenItem.item_id).price)*parseInt(chosenItem.stock_quantity))))
+                // console.log("your grand total is $" + parseFloat(((results(chosenItem.item_id).price)*parseInt(chosenItem.stock_quantity))))
+                console.log("Your grand total will be $" + grandTotal);
                 customerStart();
               }
             );

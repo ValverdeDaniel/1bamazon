@@ -135,8 +135,8 @@ function addInventory() {
             ])
             .then(function(answer) {
                 connection.query(
-                    "update products set ? Where?",
-                    [
+                    "update products set ? Where ?",
+                    [ 
                         {
                             stock_quantity: chosenItem.stock_quantity
                         },
