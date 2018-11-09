@@ -10,10 +10,10 @@ This application is the Basic + the Manager application.
 **FUNCTIONALITY**  
 
 The customer app works exactly as described in the original instructions. On load, it'll load the table and display all items for sale and the coresponding data for each item. If the table looks odd, try expanding the terminal window a little bit. You'll be prompted for item number and desired quantity.
-![alt tag](image1A.png)
+![alt text](image1A.png)
 
 In the customer app if you place an unacceptable amount you will receive the following prompt
-![alt tag](image1B.png)
+![alt text](image1B.png)
 
             case "View Products for Sale":
             viewProducts();
